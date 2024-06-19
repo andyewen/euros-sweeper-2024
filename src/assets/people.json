@@ -1,0 +1,44 @@
+{
+    "people": [
+        {
+            "name": "Andrew E.",
+            "teamCodes": ["AUT", "ENG"]
+        },
+        {
+            "name": "Anna S.",
+            "teamCodes": ["CZE", "SRB"]
+        },
+        {
+            "name": "David H.",
+            "teamCodes": ["HUN", "TUR"]
+        },
+        {
+            "name": "Ewan P.",
+            "teamCodes": ["ALB", "NED"]
+        },
+        {
+            "name": "Greig K.",
+            "teamCodes": ["DEN", "ESP"]
+        },
+        {
+            "name": "Patrick G.",
+            "teamCodes": ["BEL", "GEO"]
+        },
+        {
+            "name": "Peder R.",
+            "teamCodes": ["SUI", "UKR"]
+        },
+        {
+            "name": "Sam W.",
+            "teamCodes": ["CRO", "FRA"]
+        },
+        {
+            "name": "Scott B.",
+            "teamCodes": ["ITA", "POL"]
+        },
+        {
+            "name": "Tom H.",
+            "teamCodes": ["GER", "SCO"]
+        }
+    ]
+}

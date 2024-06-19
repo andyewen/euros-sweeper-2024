@@ -1,0 +1,124 @@
+{
+    "teams": [
+        {
+            "code": "HUN",
+            "name": "Hungary",
+            "group": "A"
+        },
+        {
+            "code": "GER",
+            "name": "Germany",
+            "group": "A"
+        },
+        {
+            "code": "SCO",
+            "name": "Scotland",
+            "group": "A"
+        },
+        {
+            "code": "SUI",
+            "name": "Switzerland",
+            "group": "A"
+        },
+        {
+            "code": "ITA",
+            "name": "Italy",
+            "group": "B"
+        },
+        {
+            "code": "ESP",
+            "name": "Spain",
+            "group": "B"
+        },
+        {
+            "code": "ALB",
+            "name": "Albania",
+            "group": "B"
+        },
+        {
+            "code": "CRO",
+            "name": "Croatia",
+            "group": "B"
+        },
+        {
+            "code": "DEN",
+            "name": "Denmark",
+            "group": "C"
+        },
+        {
+            "code": "SRB",
+            "name": "Serbia",
+            "group": "C"
+        },
+        {
+            "code": "ENG",
+            "name": "England",
+            "group": "C"
+        },
+        {
+            "code": "SVN",
+            "name": "Slovenia",
+            "group": "C"
+        },
+        {
+            "code": "AUT",
+            "name": "Austria",
+            "group": "D"
+        },
+        {
+            "code": "POL",
+            "name": "Poland",
+            "group": "D"
+        },
+        {
+            "code": "NED",
+            "name": "Netherlands",
+            "group": "D"
+        },
+        {
+            "code": "FRA",
+            "name": "France",
+            "group": "D"
+        },
+        {
+            "code": "BEL",
+            "name": "Belgium",
+            "group": "E"
+        },
+        {
+            "code": "ROU",
+            "name": "Romania",
+            "group": "E"
+        },
+        {
+            "code": "UKR",
+            "name": "Ukraine",
+            "group": "E"
+        },
+        {
+            "code": "SVK",
+            "name": "Slovakia",
+            "group": "E"
+        },
+        {
+            "code": "POR",
+            "name": "Portugal",
+            "group": "F"
+        },
+        {
+            "code": "TUR",
+            "name": "T\u00fcrkiye",
+            "group": "F"
+        },
+        {
+            "code": "GEO",
+            "name": "Georgia",
+            "group": "F"
+        },
+        {
+            "code": "CZE",
+            "name": "Czechia",
+            "group": "F"
+        }
+    ]
+}
