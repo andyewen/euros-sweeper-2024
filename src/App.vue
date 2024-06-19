@@ -112,7 +112,7 @@
     <p class="credits">
       Made by Andrew Ewen
       <a
-        href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        href="https://github.com/andyewen/euros-sweeper-2024"
         class="source-link"
       >
         [source]
