@@ -155,9 +155,9 @@ export default {
   methods: {
     addDays,
     async fetchMatches() {
-      // const response = await fetch("https://match.uefa.com/v5/matches?competitionId=3&limit=100&offset=0&phase=TOURNAMENT&seasonYear=2024&order=ASC");
-      // const matches = await response.json();
-      const matches = exampleMatches;
+      const response = await fetch("https://match.uefa.com/v5/matches?competitionId=3&limit=100&offset=0&phase=TOURNAMENT&seasonYear=2024&order=ASC");
+      const matches = await response.json();
+      // const matches = exampleMatches;
       this.loadMatches(matches);
     },
     loadMatches(matches) {

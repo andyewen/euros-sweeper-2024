@@ -2,42 +2,39 @@
   <div
     class="match"
     :class="{
-      'in-progress': match.status == 'in_progress',
-      completed: match.status == 'completed',
+      'in-progress': matchInProgress,
+      completed: matchCompleted,
     }"
   >
-    <template v-if="match">
-      <TeamBadge
-        :team="teamsByCode[match.homeTeam.countryCode]"
-        :person="peopleByTeamCode[match.homeTeam.countryCode]"
-        class="team-spaced"
-      />
-      <span v-if="showScores" class="score">
-        {{ match.home_team.goals }}
-      </span>
-      <template v-if="showScores">–</template><template v-else>vs</template>
-      <span v-if="showScores" class="score">
-        {{ match.away_team.goals }}
-      </span>
-      <TeamBadge
-        :team="teamsByCode[match.awayTeam.countryCode]"
-        :person="peopleByTeamCode[match.awayTeam.countryCode]"
-        class="team-spaced"
-      />
-      <!-- <div v-if="show_penalties">
-        <small class="in-progress-penalties">
-          <strong
-            >{{ match.home_team.penalties }} –
-            {{ match.away_team.penalties }}</strong
-          >
-          on penalties
-        </small>
-      </div> -->
-      <div class="match-kickoff">
-        <small>{{ formattedKickOffTime }}</small>
-      </div>
-    </template>
-    <p v-else>n/a</p>
+    <TeamBadge
+      :team="teamsByCode[match.homeTeam.countryCode]"
+      :person="peopleByTeamCode[match.homeTeam.countryCode]"
+      class="team-spaced"
+    />
+    <span v-if="showScores" class="score">
+      {{ match.score.regular.home }}
+    </span>
+    <template v-if="showScores">–</template><template v-else>vs</template>
+    <span v-if="showScores" class="score">
+      {{ match.score.regular.away }}
+    </span>
+    <TeamBadge
+      :team="teamsByCode[match.awayTeam.countryCode]"
+      :person="peopleByTeamCode[match.awayTeam.countryCode]"
+      class="team-spaced"
+    />
+    <div v-if="showPenalties">
+      <small class="in-progress-penalties">
+        <strong
+          >{{ match.score.penalty.home }} –
+          {{ match.score.penalty.away }}</strong
+        >
+        on penalties
+      </small>
+    </div>
+    <div class="match-kickoff">
+      <small>{{ formattedKickOffTime }}</small>
+    </div>
   </div>
 </template>
 
@@ -59,18 +56,13 @@ export default {
     return {};
   },
   computed: {
-    showScores: function () {
-      return false;
-      return (
-        this.match.status == "in_progress" || this.match.status == "completed"
-      );
+    matchInProgress() { return this.match.status === 'LIVE' },
+    matchCompleted() { return this.match.status === 'FINISHED' },
+    showScores() { return this.matchInProgress || this.matchCompleted },
+
+    showPenalties() {
+      this.showScores && Object.hasOwn(this.match.score, 'penalty');
     },
-    // show_penalties: function () {
-    //   return (
-    //     this.show_scores &&
-    //     this.match.home_team.penalties + this.match.away_team.penalties > 0
-    //   );
-    // },
     formattedKickOffTime() {
       const months = [
         "January",
