@@ -63,16 +63,16 @@
         </tr>
       </tbody>
     </table>
-    <!-- <div v-if="unallocated_teams.length" class="unallocated-teams">
+    <div v-if="unallocatedTeamCodes?.length" class="unallocated-teams">
       <TeamBadge
-        v-for="team in unallocated_teams"
-        :key="team.code"
-        :team="team"
+        v-for="teamCode in unallocatedTeamCodes"
+        :key="teamCode"
+        :team="teamsByCode[teamCode]"
         :showPerson="false"
         data-:knocked_out="team_knocked_out[team.code]"
         class="team-spaced"
       />
-    </div> -->
+    </div>
 
     <!--
     <h2 class="groups-header">Groups</h2>
@@ -180,6 +180,20 @@ export default {
   computed: {
     teamsByCode() {
       return Object.fromEntries(this.rawTeams.map((t) => [t.code, t]));
+    },
+    unallocatedTeamCodes() {
+      const allTeamCodes = new Set(this.rawTeams.map((t) => t.code));
+      const assignedTeams = new Set(this.rawPeople.map((p) => p.teamCodes).flat());
+      return Array
+        .from(allTeamCodes)
+        .sort((tca, tcb) => {
+          const teamA = this.teamsByCode[tca];
+          const teamB = this.teamsByCode[tcb];
+          if (teamA.name < teamB.name) return -1;
+          if (teamA.name > teamB.name) return 1;
+          return 0;
+        })
+        .filter((tc) => !assignedTeams.has(tc));
     },
     peopleByTeamCode() {
       const result = {};
