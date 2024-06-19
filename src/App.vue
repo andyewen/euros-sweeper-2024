@@ -130,7 +130,7 @@ import { dateString, addDays, pad2, product } from "./utils.js";
 
 import { teams as rawTeams } from './assets/teams.json';
 import { people as rawPeople } from './assets/people.json';
-import exampleMatches from './assets/example_matches.json';
+// import exampleMatches from './assets/example_matches.json';
 
 export default {
   components: {
@@ -225,6 +225,14 @@ export default {
       return Boolean(this.matches);
     },
   },
+  watch: {
+    dateRange() {
+      if (!this.dateRange) return null;
+      // Clamp selectedDate when dateRange changes.
+      if (this.selectedDate < this.dateRange.min) this.selectedDate = this.dateRange.min;
+      if (this.selectedDate > this.dateRange.max) this.selectedDate = this.dateRange.max;
+    },
+  }
 };
 </script>
 

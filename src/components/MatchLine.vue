@@ -59,9 +59,8 @@ export default {
     matchInProgress() { return this.match.status === 'LIVE' },
     matchCompleted() { return this.match.status === 'FINISHED' },
     showScores() { return this.matchInProgress || this.matchCompleted },
-
     showPenalties() {
-      this.showScores && Object.hasOwn(this.match.score, 'penalty');
+      return this.showScores && Object.hasOwn(this.match.score, 'penalty');
     },
     formattedKickOffTime() {
       const months = [
