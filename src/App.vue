@@ -36,67 +36,45 @@
       <template v-else> there are no matches on the selected day! </template>
     </div>
 
-    <!--
     <h2>Players</h2>
     <table class="player-table">
       <thead>
         <tr>
           <th>Name</th>
           <th>Teams</th>
-          <th class="hide-small">Wins</th>
-          <th class="hide-small">Teams Left</th>
-          <th v-if="tournament_complete">Prize</th>
         </tr>
       </thead>
       <tbody>
         <tr
-          v-for="person in people_with_teams_and_stats"
-          :class="[
-            {
-              'person-row-knocked-out': person.competing_team_count < 1,
-            },
-            tournament_complete ? 'final-place-' + person.final_place : '',
-          ]"
+          v-for="person in rawPeople"
           :key="person.name"
         >
           <td class="person-name">{{ person.name }}</td>
           <td>
             <TeamBadge
-              v-for="team in person.teams"
-              :key="team.code"
-              :team="team"
-              :show_person="false"
-              :knocked_out="team_knocked_out[team.code]"
+              v-for="teamCode in person.teamCodes"
+              :key="teamCode"
+              :team="teamsByCode[teamCode]"
+              :showPerson="false"
+              data-:knocked_out="team_knocked_out[team.code]"
               class="team-spaced"
             />
-          </td>
-          <td class="hide-small">
-            {{ loaded_matches ? person.total_tournament_wins : "?" }}
-          </td>
-          <td class="hide-small">
-            {{ loaded_matches ? person.competing_team_count : "?" }}
-          </td>
-          <td v-if="tournament_complete" class="prize">
-            <template v-if="loaded_matches">
-              <template v-if="person.prize"> £{{ person.prize }} </template>
-              <template v-else> — </template>
-            </template>
-            <template v-else> ? </template>
           </td>
         </tr>
       </tbody>
     </table>
-    <div v-if="unallocated_teams.length" class="unallocated-teams">
+    <!-- <div v-if="unallocated_teams.length" class="unallocated-teams">
       <TeamBadge
         v-for="team in unallocated_teams"
         :key="team.code"
         :team="team"
-        :show_person="false"
-        :knocked_out="team_knocked_out[team.code]"
+        :showPerson="false"
+        data-:knocked_out="team_knocked_out[team.code]"
         class="team-spaced"
       />
-    </div>
+    </div> -->
 
+    <!--
     <h2 class="groups-header">Groups</h2>
     <GroupTable
       v-for="group in groups"
