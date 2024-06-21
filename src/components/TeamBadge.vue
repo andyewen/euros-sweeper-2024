@@ -62,7 +62,7 @@ const fifaToIso = {
 
 function getFlagUrl(fifaCountryCode) {
   const isoCountryCode = fifaToIso[fifaCountryCode] ?? "xx";
-  return `https://flagcdn.com/h20/${isoCountryCode}.png`;
+  return `https://flagcdn.com/${isoCountryCode}.svg`;
 }
 
 export default {
