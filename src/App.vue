@@ -116,8 +116,8 @@ class Team {
 
     this.person = null;
     this.group = null;
-    this.groupStageStats = new TeamStats();
-    this.tournamentStageStats = new TeamStats();
+    this.groupStats = null;
+    this.tournamentStats = null;
   }
 }
 
@@ -129,6 +129,12 @@ class TeamStats {
     this.draws = 0;
     this.goalsScored = 0;
     this.goalsConceded = 0;
+  }
+  getGoalDifference() {
+    return this.goalsScored - this.goalsConceded;
+  }
+  getPoints() {
+    return this.wins * 3 + this.draws;
   }
 }
 
@@ -198,6 +204,59 @@ export default {
         if (a > b) return 1;
         return 0;
       });
+
+      this.generateTeamStats(this.matches);
+      this.sortGroupTables();
+    },
+    generateTeamStats(matches) {
+      for (const team of this.teams) {
+        team.groupStats = new TeamStats();
+        team.tournamentStats = new TeamStats();
+      }
+
+      matches = matches.filter((match) => match.winner);
+      for (const match of matches) {
+        let winnerCode = null;
+        if (match.winner.match.reason.startsWith('WIN')) {
+          winnerCode = match.winner.match.team.countryCode;
+        }
+
+        const homeTeam = this.teamsByCode[match.homeTeam.countryCode];
+        const awayTeam = this.teamsByCode[match.awayTeam.countryCode]
+
+        const statsKeysToUpdate = ['tournamentStats'];
+        if (match.round.mode === 'GROUP') {
+          statsKeysToUpdate.push('groupStats');
+        }
+
+        for (const statsKey of statsKeysToUpdate) {
+          if (winnerCode === homeTeam.code) {
+            homeTeam[statsKey].wins++;
+            awayTeam[statsKey].losses++;
+          } else if (winnerCode === awayTeam.code) {
+            awayTeam[statsKey].wins++;
+            homeTeam[statsKey].losses++;
+          } else {
+            homeTeam[statsKey].draws++;
+            awayTeam[statsKey].draws++;
+          }
+
+          homeTeam[statsKey].goalsScored += match.score.total.home;
+          homeTeam[statsKey].goalsConceded += match.score.total.away;
+          awayTeam[statsKey].goalsScored += match.score.total.away;
+          awayTeam[statsKey].goalsConceded += match.score.total.home;
+        }
+      }
+    },
+    sortGroupTables() {
+      for (const group of this.groups) {
+        group.teams.sort((teamA, teamB) => {
+          const teamAPoints = teamA.groupStats.getPoints();
+          const teamBPoints = teamB.groupStats.getPoints();
+          if (teamAPoints !== teamBPoints) return teamBPoints - teamAPoints;
+          return 0;
+        });
+      }
     },
     formatDay(d) {
       return pad2(new Date(d).getDate());

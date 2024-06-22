@@ -24,23 +24,21 @@
             />
           </td>
           <td class="hide-small">
-            {{ loadedMatches ? team.group_stats.wins : "?" }}
+            {{ team.groupStats?.wins ?? "?" }}
           </td>
           <td class="hide-small">
-            {{ loadedMatches ? team.group_stats.draws : "?" }}
+            {{ team.groupStats?.draws ?? "?" }}
           </td>
           <td class="hide-small">
-            {{ loadedMatches ? team.group_stats.losses : "?" }}
+            {{ team.groupStats?.losses ?? "?" }}
           </td>
           <td class="hide-small">
-            <template v-if="loadedMatches">
-              <template v-if="team.group_stats.get_goal_difference() >= 0"
-                >+</template
-              >{{ team.group_stats.get_goal_difference() }}
+            <template v-if="team.groupStats">
+              {{ numberWithSign(team.groupStats.getGoalDifference()) }}
             </template>
             <template v-else> ? </template>
           </td>
-          <td>{{ loadedMatches ? team.group_stats.get_points() : "?" }}</td>
+          <td>{{ team.groupStats?.getPoints() ?? "?" }}</td>
         </tr>
       </tbody>
     </table>
@@ -57,6 +55,11 @@ export default {
   props: {
     group: Object,
     loadedMatches: Boolean,
+  },
+  methods: {
+    numberWithSign(n) {
+      return `${n >= 0 ? "+" : "−"}${Math.abs(n)}`;
+    },
   },
 };
 </script>
