@@ -8,7 +8,6 @@
   >
     <TeamBadge
       :team="teamsByCode[match.homeTeam.countryCode]"
-      :person="peopleByTeamCode[match.homeTeam.countryCode]"
       class="team-spaced"
     />
     <span v-if="showScores" class="score">
@@ -20,7 +19,6 @@
     </span>
     <TeamBadge
       :team="teamsByCode[match.awayTeam.countryCode]"
-      :person="peopleByTeamCode[match.awayTeam.countryCode]"
       class="team-spaced"
     />
     <div v-if="showPenalties">
@@ -50,7 +48,6 @@ export default {
   props: {
     match: Object,
     teamsByCode: Object,
-    peopleByTeamCode: Object,
   },
   data() {
     return {};

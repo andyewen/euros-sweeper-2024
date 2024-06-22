@@ -3,7 +3,7 @@
     <template v-if="team">
       {{ team.name }}
       <template v-if="showPerson">
-        <template v-if="person"> ({{ person.name }}) </template>
+        <template v-if="team.person"> ({{ team.person.name }}) </template>
         <template v-else> (N/A) </template>
       </template>
       <img :src="getFlagUrl(team.code)" height="16" class="flag" />
@@ -68,7 +68,6 @@ function getFlagUrl(fifaCountryCode) {
 export default {
   props: {
     team: Object,
-    person: Object,
     showPerson: {
       type: Boolean,
       default: true,

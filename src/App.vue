@@ -29,7 +29,6 @@
           v-for="match in matchesGroupedByDate[selectedDate]"
           :match="match"
           :teamsByCode="teamsByCode"
-          :peopleByTeamCode="peopleByTeamCode"
         />
       </template>
       <template v-else-if="!matchesGroupedByDate"> loading... </template>
@@ -46,15 +45,15 @@
       </thead>
       <tbody>
         <tr
-          v-for="person in rawPeople"
+          v-for="person in people"
           :key="person.name"
         >
           <td class="person-name">{{ person.name }}</td>
           <td>
             <TeamBadge
-              v-for="teamCode in person.teamCodes"
-              :key="teamCode"
-              :team="teamsByCode[teamCode]"
+              v-for="team in person.teams"
+              :key="team.code"
+              :team="team"
               :showPerson="false"
               data-:knocked_out="team_knocked_out[team.code]"
               class="team-spaced"
@@ -63,28 +62,26 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="unallocatedTeamCodes?.length" class="unallocated-teams">
+    <div v-if="unallocatedTeams?.length" class="unallocated-teams">
       <TeamBadge
-        v-for="teamCode in unallocatedTeamCodes"
-        :key="teamCode"
-        :team="teamsByCode[teamCode]"
+        v-for="team in unallocatedTeams"
+        :key="team.code"
+        :team="team"
         :showPerson="false"
         data-:knocked_out="team_knocked_out[team.code]"
         class="team-spaced"
       />
     </div>
 
-    <!--
+    
     <h2 class="groups-header">Groups</h2>
     <GroupTable
       v-for="group in groups"
       :key="group.code"
       :group="group"
-      :teams_by_code="teams_by_code"
-      :team_code_to_person="team_code_to_person"
-      :team_knocked_out="team_knocked_out"
-      :loaded_matches="loaded_matches"
-    /> -->
+      data-:team_knocked_out="team_knocked_out"
+      :loadedMatches="false && loadedMatches"
+    />
 
     <p><strong>Good luck!</strong> 🤑</p>
     <p class="credits">
@@ -110,6 +107,32 @@ import { teams as rawTeams } from './assets/teams.json';
 import { people as rawPeople } from './assets/people.json';
 // import exampleMatches from './assets/example_matches.json';
 
+
+class Team {
+  constructor(code, name, groupCode) {
+    this.code = code;
+    this.name = name;
+    this.groupCode = groupCode;
+
+    this.person = null;
+    this.group = null;
+    this.groupStageStats = new TeamStats();
+    this.tournamentStageStats = new TeamStats();
+  }
+}
+
+
+class TeamStats {
+  constructor() {
+    this.wins = 0;
+    this.losses = 0;
+    this.draws = 0;
+    this.goalsScored = 0;
+    this.goalsConceded = 0;
+  }
+}
+
+
 export default {
   components: {
     GroupTable,
@@ -117,14 +140,43 @@ export default {
     TeamBadge,
   },
   data() {
-    var today = dateString(new Date());
+    const today = dateString(new Date());
+
+    const teams = rawTeams.map((rawTeam) => new Team(rawTeam.code, rawTeam.name, rawTeam.group));
+
+    const people = [];
+    for (const rawPerson of rawPeople) {
+      const person = {
+        name: rawPerson.name,
+        teams: teams.filter((t) => rawPerson.teamCodes.includes(t.code)),
+      };
+      for (const team of person.teams) {
+        team.person = person;
+      }
+      people.push(person);
+    }
+
+    const groups = Object
+      .entries(Object.groupBy(teams, (t) => t.groupCode))
+      .map(([groupCode, teams]) => ({ code: groupCode, teams }))
+      .sort((a, b) => {
+        if (a.code < b.code) return -1;
+        if (a.code > b.code) return 1;
+        return 0;
+      });
+    for (const group of groups) {
+      for (const team of group.teams) {
+        team.group = group;
+      }
+    }
 
     return {
       matches: null,
       today: today,
       selectedDate: today,
-      rawTeams,
-      rawPeople,
+      teams,
+      people,
+      groups,
     };
   },
   created() {
@@ -179,30 +231,16 @@ export default {
   },
   computed: {
     teamsByCode() {
-      return Object.fromEntries(this.rawTeams.map((t) => [t.code, t]));
+      return Object.fromEntries(this.teams.map((t) => [t.code, t]));
     },
-    unallocatedTeamCodes() {
-      const allTeamCodes = new Set(this.rawTeams.map((t) => t.code));
-      const assignedTeams = new Set(this.rawPeople.map((p) => p.teamCodes).flat());
-      return Array
-        .from(allTeamCodes)
-        .sort((tca, tcb) => {
-          const teamA = this.teamsByCode[tca];
-          const teamB = this.teamsByCode[tcb];
+    unallocatedTeams() {
+      return this.teams
+        .filter((t) => t.person == null)
+        .sort((teamA, teamB) => {
           if (teamA.name < teamB.name) return -1;
           if (teamA.name > teamB.name) return 1;
           return 0;
-        })
-        .filter((tc) => !assignedTeams.has(tc));
-    },
-    peopleByTeamCode() {
-      const result = {};
-      for (const person of this.rawPeople) {
-        for (const teamCode of person.teamCodes) {
-          result[teamCode] = person;
-        }
-      }
-      return result;
+        });
     },
     matchesGroupedByDate() {
       if (!this.matches) return null;
