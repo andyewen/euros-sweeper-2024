@@ -75,6 +75,9 @@
 
     
     <h2 class="groups-header">Groups</h2>
+    <div>
+      <small>Note: Groups are probably not ordered correctly if they are tied on points.</small>
+    </div>
     <GroupTable
       v-for="group in groups"
       :key="group.code"
