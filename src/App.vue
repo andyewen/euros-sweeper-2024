@@ -55,7 +55,6 @@
               :key="team.code"
               :team="team"
               :showPerson="false"
-              data-:knocked_out="team_knocked_out[team.code]"
               class="team-spaced"
             />
           </td>
@@ -68,7 +67,6 @@
         :key="team.code"
         :team="team"
         :showPerson="false"
-        data-:knocked_out="team_knocked_out[team.code]"
         class="team-spaced"
       />
     </div>
@@ -82,8 +80,6 @@
       v-for="group in groups"
       :key="group.code"
       :group="group"
-      data-:team_knocked_out="team_knocked_out"
-      :loadedMatches="false && loadedMatches"
     />
 
     <p><strong>Good luck!</strong> 🤑</p>
@@ -108,6 +104,7 @@ import { dateString, addDays, pad2, product } from "./utils.js";
 
 import { teams as rawTeams } from './assets/teams.json';
 import { people as rawPeople } from './assets/people.json';
+import { getTransitionRawChildren } from "vue";
 // import exampleMatches from './assets/example_matches.json';
 
 
@@ -121,6 +118,7 @@ class Team {
     this.group = null;
     this.groupStats = null;
     this.tournamentStats = null;
+    this.knockedOut = false;
   }
 }
 
@@ -157,7 +155,13 @@ export default {
     for (const rawPerson of rawPeople) {
       const person = {
         name: rawPerson.name,
-        teams: teams.filter((t) => rawPerson.teamCodes.includes(t.code)),
+        teams: teams
+          .filter((t) => rawPerson.teamCodes.includes(t.code))
+          .sort((teamA, teamB) => {
+            if (teamA.name < teamB.name) return -1;
+            if (teamA.name > teamB.name) return 1;
+            return 0;
+          }),
       };
       for (const team of person.teams) {
         team.person = person;
@@ -209,6 +213,7 @@ export default {
       });
 
       this.generateTeamStats(this.matches);
+      this.generateTeamsKnockedOut(this.matches);
       this.sortGroupTables();
     },
     generateTeamStats(matches) {
@@ -249,6 +254,39 @@ export default {
           awayTeam[statsKey].goalsScored += match.score.total.away;
           awayTeam[statsKey].goalsConceded += match.score.total.home;
         }
+      }
+    },
+    generateTeamsKnockedOut(matches) {
+      const groupMatches = matches.filter((match) => match.round.mode === 'GROUP');
+      const knockoutMatches = matches.filter((match) => match.round.mode === 'KNOCK_OUT');
+
+      const groupMatchesComplete = groupMatches.every((match) => match.status === 'FINISHED');
+      if (!groupMatchesComplete) {
+        return;
+      }
+
+      const remainingTeams = new Set(knockoutMatches
+        .map((match) => [match.homeTeam.countryCode, match.awayTeam.countryCode])
+        .flat()
+        .filter((teamCode) => teamCode),
+      );
+      for (const match of knockoutMatches) {
+        if (!match.winner?.match.reason.startsWith('WIN')) continue;
+
+        const winnerCode = match.winner.match.team.countryCode;
+        const loserCode = (
+          winnerCode === match.homeTeam.countryCode ? 
+          match.awayTeam.countryCode : match.homeTeam.countryCode
+        );
+        remainingTeams.delete(loserCode);
+      }
+
+      for (const team of this.teams) {
+        team.knockedOut = !remainingTeams.has(team.code);
+      }
+
+      for (const person of this.people) {
+        person.teams.sort((teamA, teamB) => teamA.knockedOut - teamB.knockedOut);
       }
     },
     sortGroupTables() {

@@ -1,5 +1,5 @@
 <template>
-  <div class="team" :class="{ 'knocked-out': knockedOut }">
+  <div class="team" :class="{ 'knocked-out': team?.knockedOut }">
     <template v-if="team">
       {{ team.name }}
       <template v-if="showPerson">
@@ -71,10 +71,6 @@ export default {
     showPerson: {
       type: Boolean,
       default: true,
-    },
-    knockedOut: {
-      type: Boolean,
-      default: false,
     },
   },
   methods: {

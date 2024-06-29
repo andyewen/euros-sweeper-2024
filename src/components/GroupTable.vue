@@ -17,10 +17,7 @@
       <tbody>
         <tr v-for="team in group.teams" :key="team.code">
           <td>
-            <TeamBadge
-              :team="team"
-              data-:knocked_out="team_knocked_out[team.code]"
-              class="team-spaced"
+            <TeamBadge :team="team" class="team-spaced"
             />
           </td>
           <td class="hide-small">
@@ -54,7 +51,6 @@ export default {
   },
   props: {
     group: Object,
-    loadedMatches: Boolean,
   },
   methods: {
     numberWithSign(n) {
