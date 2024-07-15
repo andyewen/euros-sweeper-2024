@@ -104,8 +104,7 @@ import { dateString, addDays, pad2, product } from "./utils.js";
 
 import { teams as rawTeams } from './assets/teams.json';
 import { people as rawPeople } from './assets/people.json';
-import { getTransitionRawChildren } from "vue";
-// import exampleMatches from './assets/example_matches.json';
+import archivedMatches from './assets/archived_matches_2024_07_16.json';
 
 
 class Team {
@@ -198,9 +197,9 @@ export default {
   methods: {
     addDays,
     async fetchMatches() {
-      const response = await fetch("https://match.uefa.com/v5/matches?competitionId=3&limit=100&offset=0&phase=TOURNAMENT&seasonYear=2024&order=ASC");
-      const matches = await response.json();
-      // const matches = exampleMatches;
+      // const response = await fetch("https://match.uefa.com/v5/matches?competitionId=3&limit=100&offset=0&phase=TOURNAMENT&seasonYear=2024&order=ASC");
+      // const matches = await response.json();
+      const matches = archivedMatches;
       this.loadMatches(matches);
     },
     loadMatches(matches) {
