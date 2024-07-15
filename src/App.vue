@@ -258,7 +258,9 @@ export default {
     },
     generateTeamsKnockedOut(matches) {
       const groupMatches = matches.filter((match) => match.round.mode === 'GROUP');
-      const knockoutMatches = matches.filter((match) => match.round.mode === 'KNOCK_OUT');
+      const knockoutMatches = matches.filter(
+        (match) => ['KNOCKOUT', 'FINAL'].includes(match.round.mode)
+      );
 
       const groupMatchesComplete = groupMatches.every((match) => match.status === 'FINISHED');
       if (!groupMatchesComplete) {
